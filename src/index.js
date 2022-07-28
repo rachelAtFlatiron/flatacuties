@@ -20,6 +20,16 @@ const resetBtn = document.querySelector('#reset-btn');
 /*
     FUNCTION DEFINITIONS
 */
+//async await gets info from database
+const getCharacters = async function(){
+    //pause until we get data from server
+    const res = await fetch(url);
+    //pause until we translated response to json
+    const data = await res.json();
+    //pass data into populateBar
+    populateBar(data);
+}
+
 //takes characters and creates span at top of page
 const populateBar = function(characters){
     characters.forEach((el, i) => {
@@ -55,16 +65,14 @@ const onFormSubmit = function(e){
 /*
     CODE TO RUN ON PAGE LOAD
 */
-
-//fetch get data
-fetch(url)
-.then(res => res.json())
-.then(data => {
-    console.log(data);
-    //pass all characters to populate bar
-    populateBar(data);
-})
-
+//invoke getCharacters 
+/*
+    getCharacters fetches from database > 
+    passes all data to populateBar >
+    passes each piece of data to showInfo >
+    
+*/
+getCharacters();
 //add submit event to form
 voteForm.addEventListener('submit', function(e){
     e.preventDefault();
