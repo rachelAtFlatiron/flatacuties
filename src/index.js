@@ -1,5 +1,9 @@
 /*
+*
+*
     CONSTANT DEFINITIONS
+*
+*
 */
 
 //url 
@@ -18,8 +22,19 @@ const voteForm = document.querySelector('#votes-form');
 const resetBtn = document.querySelector('#reset-btn');
 
 /*
+*
+*
     FUNCTION DEFINITIONS
+*
+*
 */
+
+/*
+    getCharacters fetches from database > 
+    passes all data to populateBar which >
+    passes each piece of data to showInfo >
+*/
+
 //async await gets info from database
 const getCharacters = async function(){
     //pause until we get data from server
@@ -63,16 +78,18 @@ const onFormSubmit = function(e){
 }
 
 /*
+*
+*
     CODE TO RUN ON PAGE LOAD
+*
+*
 */
-//invoke getCharacters 
-/*
-    getCharacters fetches from database > 
-    passes all data to populateBar >
-    passes each piece of data to showInfo >
-    
-*/
+
+//invoke getCharacters to start fetching
 getCharacters();
+
+console.log(`outside of async/await function getCharacters is ${getCharacters()}`)
+
 //add submit event to form
 voteForm.addEventListener('submit', function(e){
     e.preventDefault();
