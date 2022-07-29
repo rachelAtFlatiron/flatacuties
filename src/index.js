@@ -20,54 +20,52 @@ const resetBtn = document.querySelector('#reset-btn');
 /*
     FUNCTION DEFINITIONS
 */
-//takes characters and creates span at top of page
-const populateBar = function(characters){
-    characters.forEach((el, i) => {
-        let newSpan = document.createElement('span');
-        newSpan.innerText = el.name;
-        //on span click invoke showCharacter to populate info in middle of page
-        newSpan.addEventListener('click', function(e){
-            showCharacter(el);
-        })
-        characterBar.append(newSpan);
-    })
-}
 
-//takes one character and shows info in middle of page
-const showCharacter = function(character){
-    nameDetail.innerText = character.name;
-    imageDetail.src = character.image;
-    voteDetail.innerText = character.votes;
-}
-
-//when votes form is submitted add new vote count to current vote
-//takes in event e
-const onFormSubmit = function(e){
-    //change strings into numbers
-    let newVotes = parseInt(e.target.votes.value);
-    let curVotes = parseInt(voteDetail.innerText);
-    //update value
-    voteDetail.innerText = newVotes + curVotes;
-    //reset form
-    e.target.reset();
-}
-
-/*
-    CODE TO RUN ON PAGE LOAD
-*/
-
-//fetch get data
+//1. fetch get all characters as array
 fetch(url)
 .then(res => res.json())
-.then(data => {
-    console.log(data);
-    //pass all characters to populate bar
-    populateBar(data);
-})
+.then(data => loopCharacters(data))
+.catch(err => console.log(err));
 
-//add submit event to form
-voteForm.addEventListener('submit', function(e){
+
+//2. loop through characters
+const loopCharacters = function(data) {
+    
+    data.forEach((character, i) => {
+        //store values from database
+        let curName = character.name;
+        let curImage = character.image;
+        let curVotes = character.votes;
+
+        //1. render their name to span at top of page
+        //create span element
+        let newSpan = document.createElement('span');
+        //populate the span with character.name
+        newSpan.innerText = curName;
+        //append the span to characterBar
+        characterBar.append(newSpan);  
+
+        //2. add on click to span so information shows in the middle
+        newSpan.addEventListener('click', (e) => {
+
+            //set src in details section
+            imageDetail.src = curImage;
+            //set characters name in details section
+            nameDetail.innerText = curName;
+            //set votes in details section
+            voteDetail.innerText = curVotes;
+        })
+    })
+    
+}    
+//3. on submit form update votes div
+voteForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    //invoke onFormSubmit function
-    onFormSubmit(e); 
+    //MAKE SURE TO PARSEINT
+    let formVotes = Number(e.target.votes.value);
+    let curVotes = Number(voteDetail.innerText);
+    //add votes together
+    let newVotes = formVotes + curVotes;
+    //update votes div
+    voteDetail.innerText = newVotes;
 })
