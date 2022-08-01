@@ -1,58 +1,28 @@
 {
   "characters": [
     {
-      "id": 1,
-      "name": "Mr. Cute",
-      "image": "https://thumbs.gfycat.com/EquatorialIckyCat-max-1mb.gif",
-      "votes": 0
-    },
-    {
-      "id": 2,
-      "name": "Mx. Monkey",
-      "image": "https://thumbs.gfycat.com/FatalInnocentAmericanshorthair-max-1mb.gif",
-      "votes": 0
-    },
-    {
-      "id": 3,
-      "name": "Ms. Zebra",
-      "image": "https://media2.giphy.com/media/20G9uNqE3K4dRjCppA/source.gif",
-      "votes": 0
-    },
-    {
-      "id": 4,
-      "name": "Dr. Lion",
-      "image": "http://bestanimations.com/Animals/Mammals/Cats/Lions/animated-lion-gif-11.gif",
-      "votes": 0
-    },
-    {
-      "id": 5,
-      "name": "Mme. Panda",
-      "image": "https://media.giphy.com/media/ALalVMOVR8Qw/giphy.gif",
-      "votes": 0
-    },
-    {
       "name": "Wall-E",
       "image": "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2008%2F12%2Fwalle_l-1.jpg&q=60",
       "votes": 0,
       "id": 6
     },
     {
-      "name": "Nemo",
-      "image": "https://images.squarespace-cdn.com/content/v1/51cdafc4e4b09eb676a64e68/1470759791755-P1DBVYSIVA5V4NAWP0T6/nemo5.jpg",
-      "votes": 0,
-      "id": 7
-    },
-    {
-      "image": "https://stickershop.line-scdn.net/stickershop/v1/product/15492/LINEStorePC/main.png;compress=true",
-      "name": "pika",
-      "votes": 0,
-      "id": 8
-    },
-    {
       "name": "Dug",
       "image": "https://static.wikia.nocookie.net/pixar/images/3/35/Dug-up.jpg/revision/latest/top-crop/width/360/height/360?cb=20090602035123",
       "votes": 0,
       "id": 9
+    },
+    {
+      "name": "Peach",
+      "image": "https://static.wikia.nocookie.net/pixar/images/7/74/Peach_Close_Up.jpg/revision/latest?cb=20151022200419",
+      "votes": 33,
+      "id": 10
+    },
+    {
+      "name": "big hero 6",
+      "image": "https://static.wikia.nocookie.net/bighero6/images/f/f8/Baymax.png/revision/latest?cb=20141012221734",
+      "votes": 0,
+      "id": 11
     }
   ]
 }

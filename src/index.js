@@ -1,4 +1,8 @@
 /*
+TODO: trigger PATCH on reset votes button
+TODO: clear middle info section on character delete
+TODO: populate middle info section on new character
+/*
 *
 *
     CONSTANT DEFINITIONS
@@ -21,6 +25,10 @@ const voteDetail = document.querySelector('#vote-count');
 const voteForm = document.querySelector('#votes-form');
 const resetBtn = document.querySelector('#reset-btn');
 const newCharacterForm = document.querySelector('#character-form');
+const deleteBtn = document.querySelector('#delete-btn');
+
+//extra special global variable: keeps track of id of character being displayed in info section
+let currentCharacter;
 
 /*
 *
@@ -31,71 +39,10 @@ const newCharacterForm = document.querySelector('#character-form');
 */
 
 
-/*
-    getCharacters fetches from database > 
-    passes all data to populateBar which >
-    passes each piece of data to showInfo >
-*/
-
-//async await gets info from database
-const getCharacters = async function(){
-    //pause until we get data from server
-    const res = await fetch(url);
-    //pause until we translated response to json
-    const data = await res.json();
-    //pass data into populateBar
-    populateBar(data);
-}
-
-//takes characters and creates span at top of page
-const populateBar = function(characters){
-    characters.forEach((el, i) => {
-        let newSpan = document.createElement('span');
-        newSpan.innerText = el.name;
-        //on span click invoke showCharacter to populate info in middle of page
-        newSpan.addEventListener('click', function(e){
-            showCharacter(el);
-        })
-        characterBar.append(newSpan);
-    })
-}
-
-//takes one character and shows info in middle of page
-const showCharacter = function(character){
-    nameDetail.innerText = character.name;
-    imageDetail.src = character.image;
-    voteDetail.innerText = character.votes;
-}
-
-//when votes form is submitted add new vote count to current vote
-//takes in event e
-const onFormSubmit = function(e){
-    //change strings into numbers
-    let newVotes = parseInt(e.target.votes.value);
-    let curVotes = parseInt(voteDetail.innerText);
-    //update value
-    voteDetail.innerText = newVotes + curVotes;
-    //reset form
-    e.target.reset();
-}
-
-/*
-*
-*
-    CODE TO RUN ON PAGE LOAD
-*
-*
-*/
-
-//invoke getCharacters to start fetching
-getCharacters();
-
 //1. fetch get all characters as array
 const getAllCharacters = async function(){
-
-    let response = await fetch(url, { 
-        method: 'GET' //options will still look the same
-    });
+    characterBar.innerHTML = '';
+    let response = await fetch(url);
 
     let data = await response.json();
     loopCharacters(data); //data is IN SCOPE of invocation of loopCharacters
@@ -106,65 +53,34 @@ const getAllCharacters = async function(){
 const loopCharacters = function(data) {
     data.forEach((character, i) => {
         renderCharacter(character);
-    })
-    
+    })  
 }    
 
 //3. render span and onclick span for individual character
-const renderCharacter = function(obj) {
+const renderCharacter = function(character) {
     //store values from database
     let curName = character.name;
     let curImage = character.image;
     let curVotes = character.votes;
-
+    let curId = character.id;
+    
     //1. render their name to span at top of page
-    //create span element
     let newSpan = document.createElement('span');
-    //populate the span with character.name
+    newSpan.setAttribute('character-id', curId);
     newSpan.innerText = curName;
-    //append the span to characterBar
     characterBar.append(newSpan);  
 
     //2. add on click to span so information shows in the middle
     newSpan.addEventListener('click', (e) => {
-
-        //set src in details section
+        currentCharacter = curId;
+        console.log(`add event listner ${curId}`)
         imageDetail.src = curImage;
-        //set characters name in details section
         nameDetail.innerText = curName;
-        //set votes in details section
         voteDetail.innerText = curVotes;
     })
 }
 
-//3. on submit form update votes div
-voteForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    //MAKE SURE TO PARSEINT
-    let formVotes = Number(e.target.votes.value);
-    let curVotes = Number(voteDetail.innerText);
-    //add votes together
-    let newVotes = formVotes + curVotes;
-    //update votes div
-    voteDetail.innerText = newVotes;
-})
->>>>>>> test
-
-
-getAllCharacters();
-
-/*
-
-1. use async/await on POST to add new character to database
-2. use async/await PATCH to update current characters' vote count
-
-*/
-
-newCharacterForm.addEventListener('submit', (e) => {
-    addNewCharacter(e);
-})
-
-//get info and add to database (localhost)
+//4. get new character info and add to database (localhost)
 const addNewCharacter = async function(e) {
     e.preventDefault();
     //get info - has to follow the structure of all other entries
@@ -184,11 +100,85 @@ const addNewCharacter = async function(e) {
         })
     
         let data = await res.json();
-    
+        console.log(data);
         //pass object to previous function to render on page 
-        renderCharacter(newObject)
+        renderCharacter(data)
     //on error, catch
     } catch(e) {
         console.log(e);
     }
 }
+
+//5. get new votes and update in database (localhost)
+const updateVotes = async function(e) {
+    e.preventDefault();
+    //MAKE SURE TO PARSEINT
+    let formVotes = Number(e.target.votes.value);
+    let curVotes = Number(voteDetail.innerText);
+    //add votes together
+    let newVotes = formVotes + curVotes;
+    voteDetail.innerText = newVotes;
+
+    //update votes div
+    try {
+        let res = await fetch(`${url}/${currentCharacter}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({votes: newVotes})
+        })
+        let data = await res.json(); //looks like { votes: x }
+        voteDetail.innerText = data.votes; //just updating DOM
+    } catch(err) {
+        console.log(err)
+    }  
+}
+
+//6. delete currently displayed character from database (localhost)
+const deleteCharacter = async function(){
+    //1. use current character, currentCharacter that gets update on span click
+    //2. fetch delete to remove from database
+    let res = await fetch(`${url}/${currentCharacter}`, {
+        method: 'DELETE'
+    })
+    //3. reupdate DOM by getting everything again
+    getAllCharacters();
+}
+
+/*
+*
+*
+    CODE TO RUN ON PAGE LOAD
+*
+*
+*/
+
+//invoke getCharacters to start fetching
+getAllCharacters();
+newCharacterForm.addEventListener('submit', (e) => {
+    addNewCharacter(e);
+})
+//on submit form update votes div
+voteForm.addEventListener('submit', (e) => {
+    updateVotes(e)
+})
+deleteBtn.addEventListener('click', (e) => {
+    deleteCharacter();
+})
+
+
+/*
+GENERAL GUIDLINES FOR PATCH/POST
+1. get stuff from form
+2. build new object to update database with 
+3. make fetch request
+4. update whatever DOM elements need to be updated
+*/
+
+/*
+GENERAL GUIDLINES FOR UPDATING DOM ELEMENTS
+1. get new info
+2. get the DOM element to update
+3. update DOMs innerText, attr, src, etc. with new info
+*/
